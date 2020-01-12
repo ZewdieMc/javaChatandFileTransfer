@@ -29,8 +29,9 @@ public class ChatServer {
     public ChatServer() {
         try {
             chatDB("chatDb");
+            //dropTable("chatusers");
             chatTable("chatUsers");
-            deleteUsers();
+            //deleteUsers();
             whoIsRegistered();
             serversocket = new ServerSocket(portNumber);
             while (true) {
@@ -56,7 +57,8 @@ public class ChatServer {
     }
 
     private void chatTable(String tname) {
-        String query = "create table if not exists " + tname + " (username text NOT NULL, password text NOT NULL)";
+        String query = "create table if not exists " + tname + " (username text NOT NULL,"
+                + " phone text NOT NULL, password text NOT NULL,status text NOT NULL)";
         try {
             pst = conn.prepareStatement(query);
             pst.execute();
@@ -66,22 +68,22 @@ public class ChatServer {
         }
     }
 
-    private boolean chatLogin(String username, String password) {
+    private boolean chatLogin(String phone, String password) {
         boolean loggedIn = false;
-        String sql = "select * from chatUsers where username=?";
+        String sql = "select * from chatUsers where phone=?";
         try {
             pst = conn.prepareStatement(sql);
-            pst.setString(1, username);
+            pst.setString(1, phone);
             rs = pst.executeQuery();
             if (rs.next()) {
                 userTaken = true;
 
-                String dusername = rs.getString("username");
+                String dphone= rs.getString("phone");
                 String dpassword = rs.getString("password");
-                if (dusername.equals(username) && dpassword.equals(password)) {
+                if (dphone.equals(phone) && dpassword.equals(password)) {
                     loggedIn = true;
                 } else {
-                    System.out.println(username + " exists but can't login");
+                    System.out.println(phone + " already exists but can't login");
                 }
             }
         } catch (SQLException e) {
@@ -90,8 +92,8 @@ public class ChatServer {
         return loggedIn;
     }
 
-    private boolean chatRegister(String username, String password) {
-        String qury = "insert into chatUsers(username,password) values(?,?)";
+    private boolean chatRegister(String username, String phone, String password) {
+        String qury = "insert into chatUsers(username,phone,password,status) values(?,?,?,?)";
         boolean registered = false;
         if (userTaken) {
             System.out.println(username + " is already registered");
@@ -100,7 +102,9 @@ public class ChatServer {
             try {
                 pst = conn.prepareStatement(qury);
                 pst.setString(1, username);
-                pst.setString(2, password);
+                pst.setString(2, phone);
+                pst.setString(3, password);
+                pst.setString(4, "Online");
                 pst.execute();
                 registered = true;
             } catch (SQLException e) {
@@ -116,7 +120,7 @@ public class ChatServer {
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             while (rs.next()) {
-                System.out.println(rs.getString("username") + " : " + rs.getString("password"));
+                System.out.println(rs.getString("username") + " : " + rs.getString("password")+" : "+rs.getString("phone"));
             }
         } catch (SQLException e) {
             System.out.println(e);
@@ -133,6 +137,17 @@ public class ChatServer {
             System.out.println(e);
         }
     }
+    
+    private void dropTable(String tname){
+    String sql = "drop table "+tname;
+        try {
+            pst = conn.prepareStatement(sql);
+            pst.execute();
+            System.out.println("Table "+tname+" dropped");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
     class chat extends Thread {
 
@@ -142,6 +157,24 @@ public class ChatServer {
 
         public chat(Socket s) {
             ss = s;
+        }
+        
+        public void updateTable(){
+          try {
+            String sql = "select username as name,phone as phone,status as status from chatUsers order by name";
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+//            Client.users_table.setModel(DbUtils.resultSetToTableModel(rs));//
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        } finally {
+            try {
+                rs.close();
+                pst.close();
+
+            } catch (Exception e) {
+            }
+        }
         }
 
         @Override
@@ -155,8 +188,10 @@ public class ChatServer {
                     if (null == name) {
                     } else if (name.startsWith("Name_")) {
                         String username = name.substring(5, name.indexOf(":"));
-                        String password = name.substring(name.indexOf(":") + 1);
-                        if (chatLogin(username, password)) {
+                        String phone = name.substring(name.indexOf(":") + 1,name.indexOf("@"));
+                        String password = name.substring(name.indexOf("@")+1);
+                        if (chatLogin(phone, password)) {
+                            updateTable();//server management table has to be updated.
                             writer.println("xyz connected");
                             users.put(username, writer);
                             String a = users.keySet().toString();
@@ -164,7 +199,7 @@ public class ChatServer {
                             for (PrintWriter P : users.values()) {
                                 P.println("_O" + a);
                             }
-                        } else if (chatRegister(username, password)) {
+                        } else if (chatRegister(username,phone, password)) {
                             users.put(username, writer);
                             String a = users.keySet().toString();
                             System.out.println("Client registered " + username);

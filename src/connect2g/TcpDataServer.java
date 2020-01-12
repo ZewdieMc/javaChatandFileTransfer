@@ -77,9 +77,9 @@ class Worker implements Runnable {
                     byte[] recived_file = ReadStream();
                     switch (Integer.parseInt(new String(cmd_buffer))) {
                         case 124:
-                            File destination = new File("C:\\Users\\" + System.getProperty("user.name") + "\\Downloads\\CONNECT2g");
+                            File destination = new File("/home/" + System.getProperty("user.name") + "/Downloads/zedShare");
                             destination.mkdir();
-                            rw = new RandomAccessFile("C:\\Users\\" + System.getProperty("user.name") + "\\Downloads\\CONNECT2g\\" + new String(recived_file), "rw");
+                            rw = new RandomAccessFile("/home/" + System.getProperty("user.name") + "/Downloads/zedShare" + new String(recived_file), "rw");
                             dout.write(CreateDataPacket("125".getBytes("UTF8"), String.valueOf(current_file_pointer).getBytes("UTF8")));
                             dout.flush();
 
