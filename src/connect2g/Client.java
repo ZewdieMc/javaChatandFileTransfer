@@ -128,7 +128,8 @@ public class Client extends javax.swing.JFrame {
     private void connect() {
         serverName = serveraddress.getText();
         progressBar.setVisible(false);
-        Thread thread = new Thread(new Thread() {
+        Thread thread;
+        thread = new Thread(new Thread() {
             @Override
             public void run() {
                 try {
@@ -137,11 +138,11 @@ public class Client extends javax.swing.JFrame {
                     socket = new Socket(serverName, portNumber);
                     connecting.setForeground(Color.green.darker().darker());
                     connecting.setText("Connected to "+serverName);
-                    if(!(password.getText().equals("")||username.getText().equals(""))){
-                    connect.setVisible(false);
-                    serveraddress.setEnabled(false);
-                    userName.setEnabled(false);
-                    password.setEnabled(false);
+                    if(!(new String(password.getPassword()).equals("")||username.getText().equals(""))){
+                        connect.setVisible(false);
+                        serveraddress.setEnabled(false);
+                        userName.setEnabled(false);
+                        password.setEnabled(false);
                     }
                     reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     writer = new PrintWriter(socket.getOutputStream(), true);
@@ -175,7 +176,7 @@ public class Client extends javax.swing.JFrame {
 
                             } else if (x.startsWith("xxxloginError")) {
                                 connecting.setText("<html><font color=\"red\"> Username and/or Password is/are incorrect</font><html>");
-               //                 changePassword.setVisible(true);
+                                //                 changePassword.setVisible(true);
                                 userName.setEnabled(true);
                                 password.setEnabled(true);
                                 connect.setVisible(true);
@@ -398,7 +399,7 @@ public class Client extends javax.swing.JFrame {
             }
         });
 
-        jTabbedPane3.setBackground(new java.awt.Color(178, 9, 38));
+        jTabbedPane3.setBackground(new java.awt.Color(0, 102, 0));
         jTabbedPane3.setForeground(new java.awt.Color(247, 245, 245));
         jTabbedPane3.setFont(new java.awt.Font("Manjari", 0, 18)); // NOI18N
 

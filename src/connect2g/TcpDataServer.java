@@ -79,7 +79,7 @@ class Worker implements Runnable {
                         case 124:
                             File destination = new File("/home/" + System.getProperty("user.name") + "/Downloads/zedShare");
                             destination.mkdir();
-                            rw = new RandomAccessFile("/home/" + System.getProperty("user.name") + "/Downloads/zedShare" + new String(recived_file), "rw");
+                            rw = new RandomAccessFile("/home/" + System.getProperty("user.name") + "/Downloads/zedShare/" + new String(recived_file), "rw");
                             dout.write(CreateDataPacket("125".getBytes("UTF8"), String.valueOf(current_file_pointer).getBytes("UTF8")));
                             dout.flush();
 
