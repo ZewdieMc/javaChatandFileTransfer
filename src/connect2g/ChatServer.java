@@ -11,16 +11,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.*;
 import javax.swing.JOptionPane;
+import net.proteanit.sql.DbUtils;
 
 public class ChatServer {
-    
+
     int portNumber = 8188;
     ServerSocket serversocket;
     BufferedReader reader;
     PrintWriter writer;
     String recieverNames[];
     private static Map<String, PrintWriter> users = new HashMap<>();
-    
+
     private Connection conn = null;
     private PreparedStatement pst = null;
     private ResultSet rs = null;
@@ -78,7 +79,7 @@ public class ChatServer {
             if (rs.next()) {
                 userTaken = true;
 
-                String dphone= rs.getString("phone");
+                String dphone = rs.getString("phone");
                 String dpassword = rs.getString("password");
                 if (dphone.equals(phone) && dpassword.equals(password)) {
                     loggedIn = true;
@@ -120,7 +121,7 @@ public class ChatServer {
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             while (rs.next()) {
-                System.out.println(rs.getString("username") + " : " + rs.getString("password")+" : "+rs.getString("phone"));
+                System.out.println(rs.getString("username") + " : " + rs.getString("password") + " : " + rs.getString("phone"));
             }
         } catch (SQLException e) {
             System.out.println(e);
@@ -137,13 +138,13 @@ public class ChatServer {
             System.out.println(e);
         }
     }
-    
-    private void dropTable(String tname){
-    String sql = "drop table "+tname;
+
+    private void dropTable(String tname) {
+        String sql = "drop table " + tname;
         try {
             pst = conn.prepareStatement(sql);
             pst.execute();
-            System.out.println("Table "+tname+" dropped");
+            System.out.println("Table " + tname + " dropped");
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -158,23 +159,35 @@ public class ChatServer {
         public chat(Socket s) {
             ss = s;
         }
-        
-        public void updateTable(){
-          try {
-            String sql = "select username as name,phone as phone,status as status from chatUsers order by name";
-            pst = conn.prepareStatement(sql);
-            rs = pst.executeQuery();
-//            Client.users_table.setModel(DbUtils.resultSetToTableModel(rs));//
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
-        } finally {
-            try {
-                rs.close();
-                pst.close();
 
+        public void updateTable() {
+            try {
+                String sql = "select username as name,phone as phone,status as status from chatUsers order by name";
+                pst = conn.prepareStatement(sql);
+                rs = pst.executeQuery();
+                Client.users_table.setModel(DbUtils.resultSetToTableModel(rs));//
             } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            } finally {
+                try {
+                    rs.close();
+                    pst.close();
+
+                } catch (Exception e) {
+                }
             }
         }
+        public void updateUser(String username, String status){
+            try {
+                            String sql = "update chatUsers set status = ? where username = ?";
+                            pst = conn.prepareStatement(sql);
+                            pst.setString(1, status);
+                            pst.setString(2, username);
+                            pst.execute();
+                        } catch (Exception e) {
+                            System.out.println("Error: " + e);
+                        }
+        
         }
 
         @Override
@@ -188,9 +201,10 @@ public class ChatServer {
                     if (null == name) {
                     } else if (name.startsWith("Name_")) {
                         String username = name.substring(5, name.indexOf(":"));
-                        String phone = name.substring(name.indexOf(":") + 1,name.indexOf("@"));
-                        String password = name.substring(name.indexOf("@")+1);
+                        String phone = name.substring(name.indexOf(":") + 1, name.indexOf("@"));
+                        String password = name.substring(name.indexOf("@") + 1);
                         if (chatLogin(phone, password)) {
+                            updateUser(username, "Online");
                             updateTable();//server management table has to be updated.
                             writer.println("xyz connected");
                             users.put(username, writer);
@@ -199,7 +213,7 @@ public class ChatServer {
                             for (PrintWriter P : users.values()) {
                                 P.println("_O" + a);
                             }
-                        } else if (chatRegister(username,phone, password)) {
+                        } else if (chatRegister(username, phone, password)) {
                             users.put(username, writer);
                             String a = users.keySet().toString();
                             System.out.println("Client registered " + username);
@@ -243,7 +257,8 @@ public class ChatServer {
                     } else if (name.startsWith("exit")) {
 
                         String clientexiting = name.substring(4);
-
+                        updateUser(clientexiting, "Offline");
+                        updateTable();
                         users.remove(clientexiting);
 
                         String a = users.keySet().toString();
@@ -282,7 +297,7 @@ public class ChatServer {
 
     public static void main(String[] args) {
         ChatServer chatServer = new ChatServer();
-       
+
     }
 
 }

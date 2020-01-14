@@ -500,12 +500,11 @@ public class Client extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(typeArea, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(Send, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 20, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(typeArea)
+                    .addComponent(Send, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -515,6 +514,7 @@ public class Client extends javax.swing.JFrame {
 
         serveraddress.setFont(new java.awt.Font("Manjari", 1, 18)); // NOI18N
         serveraddress.setForeground(new java.awt.Color(0, 102, 0));
+        serveraddress.setText("localhost");
 
         username.setFont(new java.awt.Font("Manjari", 1, 18)); // NOI18N
         username.setForeground(new java.awt.Color(0, 102, 0));
@@ -529,6 +529,7 @@ public class Client extends javax.swing.JFrame {
 
         pNumber.setFont(new java.awt.Font("Manjari", 1, 18)); // NOI18N
         pNumber.setForeground(new java.awt.Color(0, 102, 0));
+        pNumber.setText("+251936733488");
 
         username1.setFont(new java.awt.Font("Manjari", 1, 18)); // NOI18N
         username1.setForeground(new java.awt.Color(0, 102, 0));
@@ -643,7 +644,7 @@ public class Client extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(connecting, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
+                        .addComponent(connecting, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
                         .addGap(397, 397, 397))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(103, 103, 103)
@@ -735,7 +736,7 @@ public class Client extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(85, Short.MAX_VALUE)
+                .addContainerGap(105, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(83, 83, 83)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -763,23 +764,29 @@ public class Client extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
         jScrollPane1.setViewportView(users_table);
-        if (users_table.getColumnModel().getColumnCount() > 0) {
-            users_table.getColumnModel().getColumn(1).setResizable(false);
-        }
 
         jTabbedPane1.addTab("users", jScrollPane1);
 
         jTabbedPane3.addTab("Server Management", jTabbedPane1);
 
+        jMenuBar1.setBackground(new java.awt.Color(0, 102, 0));
+
         jMenu1.setBackground(new java.awt.Color(204, 204, 255));
         jMenu1.setBorder(javax.swing.BorderFactory.createCompoundBorder());
-        jMenu1.setForeground(new java.awt.Color(0, 153, 0));
+        jMenu1.setForeground(new java.awt.Color(255, 255, 255));
         jMenu1.setText("Option");
         jMenu1.setFont(new java.awt.Font("Manjari", 1, 18)); // NOI18N
 
@@ -833,7 +840,7 @@ public class Client extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setForeground(new java.awt.Color(0, 153, 0));
+        jMenu2.setForeground(new java.awt.Color(255, 255, 255));
         jMenu2.setText("About");
         jMenu2.setFont(new java.awt.Font("Manjari", 1, 18)); // NOI18N
         jMenuBar1.add(jMenu2);
@@ -845,14 +852,13 @@ public class Client extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jTabbedPane3)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addComponent(jTabbedPane3))
+            .addComponent(jTabbedPane3)
         );
 
         pack();
@@ -921,6 +927,7 @@ public class Client extends javax.swing.JFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         if (socket != null) {
             writer.println("exit" + clientName);
+            
         }
         System.exit(0);
     }//GEN-LAST:event_formWindowClosing
